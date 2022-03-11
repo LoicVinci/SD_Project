@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class Graph {
 
-    private Map<Aeroport, Set<Vol>> volsSortants;
+    private Map<Aeroport, Set<Vol>> volsSortants = new HashMap<Aeroport, Set<Vol>>();
 
     public Graph(File aeroports, File vols){
 
@@ -28,7 +28,18 @@ public class Graph {
             String strCurrentLine;
 
             while ((strCurrentLine = bufferedReader.readLine()) != null) {
-                System.out.println(strCurrentLine);
+                String[] attributsAeroports = strCurrentLine.split(",", -1);
+                Aeroport aeroport = new Aeroport(attributsAeroports[0],attributsAeroports[1],
+                    attributsAeroports[2],attributsAeroports[3],
+                    Double.parseDouble(attributsAeroports[4]),Double.parseDouble(attributsAeroports[5]));
+                Set<Vol> ensembleVols = new HashSet<Vol>();
+                volsSortants.put(aeroport, ensembleVols);
+            }
+            while((strCurrentLine = bufferedReader2.readLine()) != null) {
+                String[] attributsVols = strCurrentLine.split(",", -1);
+                Vol vol = new Vol(attributsVols[0], attributsVols[1], attributsVols[2]);
+                //TODO Ajouter vols dans le set (Comment identifier l'aéroport)
+
             }
 
         } catch (IOException e) {

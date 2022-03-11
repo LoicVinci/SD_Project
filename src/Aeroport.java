@@ -14,7 +14,17 @@ public class Aeroport {
         this.ville= ville;
         this.pays = pays;
         this.nom= nom;
+    }
 
-
+    @Override
+    public String toString() {
+        return "Aeroport{" +
+            "codeIATA='" + codeIATA + '\'' +
+            ", nom='" + nom + '\'' +
+            ", ville='" + ville + '\'' +
+            ", pays='" + pays + '\'' +
+            ", longitude=" + longitude +
+            ", latitude=" + latitude +
+            '}';
     }
 }
