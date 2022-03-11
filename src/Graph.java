@@ -14,11 +14,15 @@ public class Graph {
 
         FileReader filereader = null;
         BufferedReader bufferedReader = null;
+        FileReader filereader2 = null;
+        BufferedReader bufferedReader2 = null;
 
         try {
 
             filereader = new FileReader(aeroports);
             bufferedReader = new BufferedReader(filereader);
+            filereader2 = new FileReader(vols);
+            bufferedReader2 = new BufferedReader(filereader2);
 
             String strCurrentLine;
 
@@ -37,6 +41,12 @@ public class Graph {
 
                 if (filereader != null)
                     filereader.close();
+
+                if (bufferedReader2 != null)
+                    bufferedReader2.close();
+
+                if (filereader2 != null)
+                    filereader2.close();
 
             } catch (IOException e) {
                 e.printStackTrace();
