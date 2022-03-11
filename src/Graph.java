@@ -4,11 +4,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class Graph {
 
-    HashSet<Aeroport> ensembleAeroport = new HashSet<Aeroport>();
-    HashSet<Vol> ensembleVol = new HashSet<Vol>();
+    private Map<Aeroport, Set<Vol>> volsSortants;
 
     public Graph(File aeroports, File vols){
 
