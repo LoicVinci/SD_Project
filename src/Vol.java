@@ -1,21 +1,25 @@
 public class Vol {
     private String compagnie;
-    private String codeIATASource;
-    private String codeIATADestination;
+    private Aeroport aeroportSource;
+    private Aeroport aeroportDestination;
 
 
 
 
-    public Vol(String compagnie, String codeIATASource,String codeIATADestination){
+    public Vol(String compagnie, Aeroport aeroportSource, Aeroport aeroportDestination){
         this.compagnie=compagnie;
-        this.codeIATADestination=codeIATADestination;
-        this.codeIATASource=codeIATASource;
+        this.aeroportSource = aeroportSource;
+        this.aeroportDestination=aeroportDestination;
 
 
     }
 
-    public String getCodeIATASource() {
-        return codeIATASource;
+    public Aeroport getAeroportSource() {
+        return aeroportSource;
+    }
+
+    public Aeroport getAeroportDestination() {
+        return aeroportDestination;
     }
 }
 
