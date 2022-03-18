@@ -16,6 +16,10 @@ public class Aeroport {
         this.nom= nom;
     }
 
+    public String getCodeIATA() {
+        return codeIATA;
+    }
+
     @Override
     public String toString() {
         return "Aeroport{" +

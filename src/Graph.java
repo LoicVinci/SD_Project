@@ -38,7 +38,11 @@ public class Graph {
             while((strCurrentLine = bufferedReader2.readLine()) != null) {
                 String[] attributsVols = strCurrentLine.split(",", -1);
                 Vol vol = new Vol(attributsVols[0], attributsVols[1], attributsVols[2]);
-                //TODO Ajouter vols dans le set (Comment identifier l'aéroport)
+                for(Aeroport aeroport : volsSortants.keySet()) {
+                    if(aeroport.getCodeIATA().equals(vol.getCodeIATASource())) {
+                        volsSortants.get(aeroport).add(vol);
+                    }
+                }
 
             }
 
@@ -67,7 +71,7 @@ public class Graph {
 
     }
 
-    public void calculerItineraireMinimisantNombreVol(String s, String s2) {
+    public void calculerItineraireMinimisantNombreVol(String a1, String a2) {
 
     }
 

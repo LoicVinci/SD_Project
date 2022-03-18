@@ -13,5 +13,9 @@ public class Vol {
 
 
     }
+
+    public String getCodeIATASource() {
+        return codeIATASource;
+    }
 }
 
