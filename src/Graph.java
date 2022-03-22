@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,20 +27,23 @@ public class Graph {
             bufferedReader2 = new BufferedReader(filereader2);
 
             String strCurrentLine;
+            HashMap<String, Aeroport> ensembleAeroport = new HashMap<String, Aeroport>();
 
             while ((strCurrentLine = bufferedReader.readLine()) != null) {
                 String[] attributsAeroports = strCurrentLine.split(",", -1);
                 Aeroport aeroport = new Aeroport(attributsAeroports[0],attributsAeroports[1],
                     attributsAeroports[2],attributsAeroports[3],
                     Double.parseDouble(attributsAeroports[4]),Double.parseDouble(attributsAeroports[5]));
-                Set<Vol> ensembleVols = new HashSet<Vol>();
+                ensembleAeroport.put(aeroport.getCodeIATA(), aeroport);
+                Set<Vol> ensembleVols = new HashSet<>();
                 volsSortants.put(aeroport, ensembleVols);
             }
             while((strCurrentLine = bufferedReader2.readLine()) != null) {
                 String[] attributsVols = strCurrentLine.split(",", -1);
-                Vol vol = new Vol(attributsVols[0], attributsVols[1], attributsVols[2]);
+                Vol vol = new Vol(attributsVols[0], ensembleAeroport.get(attributsVols[1]),
+                    ensembleAeroport.get(attributsVols[2]));
                 for(Aeroport aeroport : volsSortants.keySet()) {
-                    if(aeroport.getCodeIATA().equals(vol.getCodeIATASource())) {
+                    if(aeroport.equals(vol.getAeroportSource())) {
                         volsSortants.get(aeroport).add(vol);
                     }
                 }
@@ -72,6 +76,52 @@ public class Graph {
     }
 
     public void calculerItineraireMinimisantNombreVol(String a1, String a2) {
+        ArrayDeque<Aeroport> fileAeroport = new ArrayDeque<Aeroport>();
+        HashSet<Aeroport> aeroportsVisite = new HashSet<Aeroport>();
+        HashMap<Aeroport, Vol> ensembleVol = new HashMap<Aeroport, Vol>();
+
+        //Surement à changer
+        Aeroport aeroportActuel = new Aeroport();
+        Aeroport aeroportSource = new Aeroport();
+        Aeroport aeroportCible = new Aeroport();
+
+        //Recherche Aeroport Source & Aeroport Cible
+        for(Aeroport aeroport : volsSortants.keySet()) {
+            if(aeroport.getCodeIATA().equals(a1)) {
+                aeroportSource = aeroport;
+                aeroportActuel = aeroport;
+                fileAeroport.add(aeroportActuel);
+            }
+            if(aeroport.getCodeIATA().equals(a2)) {
+                aeroportCible = aeroport;
+            }
+        }
+
+        Set<Vol> vols;
+        while(!fileAeroport.isEmpty() && !aeroportActuel.equals(aeroportCible)) {
+
+            aeroportsVisite.add(aeroportActuel);
+            vols = volsSortants.get(aeroportActuel);
+
+            for(Vol vol : vols) {
+                if(!aeroportsVisite.contains(vol.getAeroportDestination())) {
+                    fileAeroport.add(vol.getAeroportDestination());
+                    ensembleVol.put(vol.getAeroportSource(), vol);
+                }
+            }
+
+            aeroportActuel = fileAeroport.poll();
+
+        }
+
+        HashSet<Vol> affichageVols = new HashSet<Vol>();
+        while(aeroportSource.equals(aeroportActuel)) {
+            //aeroportActuel = ;
+            affichageVols.add(ensembleVol.get(aeroportActuel));
+        }
+        for(int i = 0; i < affichageVols.size(); i++) {
+            //System.out.println(affichageVols.g);
+        }
 
     }
 
