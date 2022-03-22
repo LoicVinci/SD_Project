@@ -3,10 +3,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+
 
 public class Graph {
 
@@ -96,7 +99,8 @@ public class Graph {
                 aeroportCible = aeroport;
             }
         }
-
+        //sert a garder le dernier aeroport juste avant celui cible
+        Aeroport aerorportPrecedent= aeroportActuel;
         Set<Vol> vols;
         while(!fileAeroport.isEmpty() && !aeroportActuel.equals(aeroportCible)) {
 
@@ -109,16 +113,29 @@ public class Graph {
                     ensembleVol.put(vol.getAeroportSource(), vol);
                 }
             }
-
+            aerorportPrecedent=aeroportActuel;
             aeroportActuel = fileAeroport.poll();
 
         }
-
+        int nbreDaeroports=0;
         HashSet<Vol> affichageVols = new HashSet<Vol>();
-        while(aeroportSource.equals(aeroportActuel)) {
+        while(!aeroportSource.equals(aeroportActuel)) {
             //aeroportActuel = ;
+
+            Set<Vol> volsPrecedent = volsSortants.get(aeroportActuel );
+            for (Vol vol: volsPrecedent
+            ) {
+                if(vol.getAeroportDestination().equals(aeroportActuel)) {
+                    System.out.println(vol);
+
+                }
+                break;
+
+            }
+
             affichageVols.add(ensembleVol.get(aeroportActuel));
         }
+
         for(int i = 0; i < affichageVols.size(); i++) {
             //System.out.println(affichageVols.g);
         }
@@ -126,7 +143,93 @@ public class Graph {
     }
 
     public void calculerItineraireMiniminantDistance(String s, String s2) {
+        int nombreAeroports = volsSortants.size();
+        HashMap<Aeroport, Double> aeroportDistance = new HashMap<>();
+        HashMap<Aeroport, Double> aeroportDistanceDef = new HashMap<>();
+        Aeroport aeroportActuel = new Aeroport();
+        ArrayList<Aeroport> visités = new ArrayList<>();
+        int cpt=0;
 
+
+        Aeroport aeroportMin = new Aeroport();
+
+        Aeroport source = new Aeroport();
+        System.out.println(source.getCodeIATA());
+
+        Aeroport destination = new Aeroport();
+
+        while (source.getCodeIATA() == null || destination.getCodeIATA() == null) {
+            System.out.println("ok");
+
+            for (Aeroport aeroport : volsSortants.keySet()
+            ) {
+                if (aeroport.getCodeIATA().equals(s)) {
+
+                    source = aeroport;
+                    System.out.println(source.getCodeIATA());
+
+
+                }
+                if (aeroport.getCodeIATA().equals(s2)) {
+
+                    destination = aeroport;
+                    System.out.println(destination.getCodeIATA());
+
+                }
+            }
+        }
+
+
+
+        aeroportActuel=source;
+
+        Set<Vol> volsAeroportActuel = volsSortants.get(aeroportActuel);
+        Double distance ;
+        double distanceMin=999999999;
+        double toAdd=0;
+        visités.add(aeroportActuel);
+        Aeroport volDestination= new Aeroport();
+        while(!aeroportActuel.equals(destination)){
+
+
+
+                distanceMin=999999999;
+                //remplissage du tableau temporaire
+                for (Vol vol: volsAeroportActuel
+                ) {
+                   volDestination= vol.getAeroportDestination();
+                    distance=Util.distance(aeroportActuel.getCLatitude(),aeroportActuel.getLongitude(),
+                        volDestination.getCLatitude(),volDestination.getLongitude())+toAdd;//calculate distance between get
+                    aeroportDistance.put(volDestination,distance);
+
+                    //on trouve quel aeroport sera a la moins longue distance du precedent;
+                    if(distance<distanceMin)distanceMin=distance;
+                    aeroportMin=vol.getAeroportDestination();
+
+                }
+
+                aeroportActuel=aeroportMin;
+                System.out.println(aeroportActuel.getCodeIATA());
+
+                visités.add(aeroportMin);
+                toAdd=distanceMin;
+
+                //remplissage du tableau definitif;
+                aeroportDistanceDef.put(aeroportMin,distanceMin);
+
+                volsAeroportActuel = volsSortants.get(aeroportActuel);
+                cpt++;
+
+
+
+
+            }
+        System.out.println("boucle finie");
+
+
+        System.out.println(aeroportDistanceDef.get(destination));
     }
+
+
 
 }
