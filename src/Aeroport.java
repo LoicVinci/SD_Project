@@ -22,6 +22,12 @@ public class Aeroport {
     public String getCodeIATA() {
         return codeIATA;
     }
+    public double getCLatitude() {
+        return latitude;
+    }
+    public Double getLongitude() {
+        return longitude;
+    }
 
     @Override
     public String toString() {
