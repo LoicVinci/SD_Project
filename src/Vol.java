@@ -21,5 +21,10 @@ public class Vol {
     public Aeroport getAeroportDestination() {
         return aeroportDestination;
     }
+
+    @Override
+    public String toString() {
+        return "Vol ( Aéroport Source = " + aeroportSource.getCodeIATA() + " Aéroport Destination = " + aeroportDestination.getCodeIATA() + " )";
+    }
 }
 
