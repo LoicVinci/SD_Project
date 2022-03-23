@@ -13,6 +13,7 @@ import java.util.Set;
 
 public class Graph {
 
+    private HashMap<String, Aeroport> ensembleAeroport = new HashMap<String, Aeroport>();
     private Map<Aeroport, Set<Vol>> volsSortants = new HashMap<Aeroport, Set<Vol>>();
 
     public Graph(File aeroports, File vols){
@@ -30,7 +31,6 @@ public class Graph {
             bufferedReader2 = new BufferedReader(filereader2);
 
             String strCurrentLine;
-            HashMap<String, Aeroport> ensembleAeroport = new HashMap<String, Aeroport>();
 
             while ((strCurrentLine = bufferedReader.readLine()) != null) {
                 String[] attributsAeroports = strCurrentLine.split(",", -1);
@@ -77,58 +77,44 @@ public class Graph {
         }
 
     }
+
     public void calculerItineraireMinimisantNombreVol(String a1, String a2) {
         ArrayDeque<Aeroport> fileAeroport = new ArrayDeque<Aeroport>();
         HashSet<Aeroport> aeroportsVisite = new HashSet<Aeroport>();
         HashMap<Aeroport, Vol> ensembleVol = new HashMap<Aeroport, Vol>();
 
-        Aeroport aeroportCourant = new Aeroport();
-        Aeroport aeroportDepart = new Aeroport();
-        Aeroport aeroportCible = new Aeroport();
+        Aeroport aeroportCourant = ensembleAeroport.get(a1);
 
-        //Recherche Aeroport Courant
-        for(Aeroport aeroport : volsSortants.keySet()) {
-            if(aeroport.getCodeIATA().equals(a1)) {
-                aeroportCourant = aeroport;
-                aeroportDepart = aeroport;
-            }
-            if(aeroport.getCodeIATA().equals(a2)) {
-                aeroportCible = aeroport;
-            }
-        }
+        fileAeroport.addLast(aeroportCourant);
+        aeroportsVisite.add(aeroportCourant);
 
-        //Algo
+        //Algorythme BFS
         boolean cibleAtteinte = false;
         while (aeroportCourant != null && !cibleAtteinte) {
-
+            aeroportCourant = fileAeroport.removeFirst();
             for (Vol vol : volsSortants.get(aeroportCourant)) {
-
                 if (!aeroportsVisite.contains(vol.getAeroportDestination())) {
-                    fileAeroport.push(vol.getAeroportDestination());
+                    fileAeroport.addLast(vol.getAeroportDestination());
                     aeroportsVisite.add(vol.getAeroportDestination());
                     ensembleVol.put(vol.getAeroportDestination(), vol);
-
-                    //Cible atteinte
-                    if(aeroportCourant.equals(aeroportCible))
-                        cibleAtteinte = true;
+                    cibleAtteinte = aeroportCourant.equals(ensembleAeroport.get(a2));
                 }
-            }
-            if(!cibleAtteinte) {
-                aeroportCourant = fileAeroport.poll();
             }
         }
 
-        //Afficher vols
+        //Chemin Inverse
         ArrayList<Vol> vols = new ArrayList<>();
         boolean fin = false;
         while(!fin) {
             Vol vol = ensembleVol.get(aeroportCourant);
             vols.add(vol);
-            if(vol.getAeroportSource().equals(aeroportDepart)) {
+            if(vol.getAeroportSource().equals(ensembleAeroport.get(a1))) {
                 fin = true;
             }
             aeroportCourant = vol.getAeroportSource();
         }
+
+        //Affichage des vols
         int i = 0;
         for(Vol vol : vols) {
             i++;
@@ -136,86 +122,6 @@ public class Graph {
         }
     }
 
-    /*
-    public void calculerItineraireMinimisantNombreVol(String a1, String a2) {
-        ArrayDeque<Aeroport> fileAeroport = new ArrayDeque<Aeroport>();
-        HashSet<Aeroport> aeroportsVisite = new HashSet<Aeroport>();
-        HashMap<Aeroport, Vol> ensembleVol = new HashMap<Aeroport, Vol>();
-
-        //Surement à changer
-        Aeroport aeroportCourant = new Aeroport();
-        Aeroport aeroportCible = new Aeroport();
-        Aeroport aeroportPrec = new Aeroport();
-
-        //Recherche Aeroport Source & Aeroport Cible
-        for(Aeroport aeroport : volsSortants.keySet()) {
-            if(aeroport.getCodeIATA().equals(a1)) {
-                aeroportCourant = aeroport;
-                fileAeroport.add(aeroportCourant);
-            }
-            if(aeroport.getCodeIATA().equals(a2)) {
-                aeroportCible = aeroport;
-            }
-        }
-        //sert a garder le dernier aeroport juste avant celui cible
-        Aeroport aerorportPrecedent= aeroportActuel;
-        Set<Vol> vols;
-        while(!fileAeroport.isEmpty() && !aeroportCourant.equals(aeroportCible)) {
-
-            aeroportsVisite.add(aeroportCourant);
-            vols = volsSortants.get(aeroportCourant);
-
-            for(Vol vol : vols) {
-                if(!aeroportsVisite.contains(vol.getAeroportDestination())) {
-                    fileAeroport.add(vol.getAeroportDestination());
-                    ensembleVol.put(vol.getAeroportSource(), vol);
-                }
-            }
-            aeroportPrec = aeroportCourant;
-            aeroportCourant = fileAeroport.poll();
-            aerorportPrecedent=aeroportActuel;
-            aeroportActuel = fileAeroport.poll();
-
-        }
-        int nbreDaeroports=0;
-        HashSet<Vol> affichageVols = new HashSet<Vol>();
-        aeroportCourant = aeroportPrec;
-        boolean fin = false;
-        while(!fin) {
-            Vol vol = ensembleVol.get(aeroportCourant);
-            if(vol == null) {
-                fin = true;
-            }
-            else {
-                aeroportCourant = vol.getAeroportSource();
-                affichageVols.add(vol);
-            }
-        while(!aeroportSource.equals(aeroportActuel)) {
-            //aeroportActuel = ;
-
-            Set<Vol> volsPrecedent = volsSortants.get(aeroportActuel );
-            for (Vol vol: volsPrecedent
-            ) {
-                if(vol.getAeroportDestination().equals(aeroportActuel)) {
-                    System.out.println(vol);
-
-                }
-                break;
-
-            }
-
-            affichageVols.add(ensembleVol.get(aeroportActuel));
-        }
-
-        for(int i = 0; i < affichageVols.size(); i++) {
-            //System.out.println(affichageVols.g);
-        System.out.println(affichageVols);
-        for(Vol vol : affichageVols) {
-            System.out.println(vol);
-        }
-        System.out.println("fin !");
-    }
-     */
 
     public void calculerItineraireMiniminantDistance(String s, String s2) {
         int nombreAeroports = volsSortants.size();

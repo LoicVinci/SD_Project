@@ -24,7 +24,7 @@ public class Vol {
 
     @Override
     public String toString() {
-        return "Vol ( Aéroport Source = " + aeroportSource.getCodeIATA() + " Aéroport Destination = " + aeroportDestination.getCodeIATA() + " )";
+        return "Vol ( Aéroport Source = " + aeroportSource.getCodeIATA() + " | Aéroport Destination = " + aeroportDestination.getCodeIATA() + " )";
     }
 }
 
