@@ -4,6 +4,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -122,95 +124,51 @@ public class Graph {
         }
     }
 
+    public void calculerItineraireMiniminantDistance(String a1, String a2) {
 
-    public void calculerItineraireMiniminantDistance(String s, String s2) {
-        int nombreAeroports = volsSortants.size();
-        HashMap<Aeroport, Double> aeroportDistance = new HashMap<>();
-        HashMap<Aeroport, Double> aeroportDistanceDef = new HashMap<>();
-        Aeroport aeroportActuel = new Aeroport();
-        ArrayList<Aeroport> visités = new ArrayList<>();
-        int cpt=0;
+        HashMap<Aeroport, Double> aeroportProvisoire = new HashMap<>();
+        HashMap<Aeroport, Double> aeroportDefinits = new HashMap<>();
+        HashMap<Aeroport, Vol> ensembleVol = new HashMap<>();
 
+        Aeroport aeroportDepart = ensembleAeroport.get(a1);
+        Aeroport aeroportCible = ensembleAeroport.get(a2);
+        Aeroport aeroportActuel = aeroportDepart;
 
-        Aeroport aeroportMin = new Aeroport();
+        aeroportProvisoire.put(aeroportDepart, 0.0);
 
-        Aeroport source = new Aeroport();
-        System.out.println(source.getCodeIATA());
+        while(!aeroportProvisoire.isEmpty() && !aeroportDefinits.containsKey(aeroportCible)) {
 
-        Aeroport destination = new Aeroport();
-
-        while (source.getCodeIATA() == null || destination.getCodeIATA() == null) {
-            System.out.println("ok");
-
-            for (Aeroport aeroport : volsSortants.keySet()
-            ) {
-                if (aeroport.getCodeIATA().equals(s)) {
-
-                    source = aeroport;
-                    System.out.println(source.getCodeIATA());
-
-
+            //selectionner min value dans provisoire
+            Double min = Collections.min(aeroportProvisoire.values());
+            for (Aeroport aeroport : aeroportProvisoire.keySet()) {
+                if (aeroportProvisoire.get(aeroport) == min) {
+                    aeroportActuel = aeroport;
+                    break;
                 }
-                if (aeroport.getCodeIATA().equals(s2)) {
+            }
 
-                    destination = aeroport;
-                    System.out.println(destination.getCodeIATA());
+            //ajouter dans definitives
+            aeroportDefinits.put(aeroportActuel, aeroportProvisoire.get(aeroportActuel));
+            aeroportProvisoire.remove(aeroportActuel);
 
+            //calculer etiquette provisoire
+            for (Vol vol : volsSortants.get(aeroportActuel)) {
+                Aeroport aeroportSource = vol.getAeroportSource();
+                Aeroport aeroportDestination = vol.getAeroportDestination();
+                Double distance =
+                    Util.distance(aeroportSource.getCLatitude(), aeroportSource.getLongitude(),
+                        aeroportDestination.getCLatitude(), aeroportDestination.getLongitude());
+                distance += aeroportDefinits.get(aeroportActuel);
+                if(!aeroportDefinits.containsKey(aeroportDestination)) {
+                    if(aeroportProvisoire.get(aeroportDestination) == null) {
+                        aeroportProvisoire.put(aeroportDestination, distance);
+                    } else if(distance < aeroportProvisoire.get(aeroportDestination)) {
+                        aeroportProvisoire.put(aeroportDestination, distance);
+                    }
                 }
             }
         }
-
-
-
-        aeroportActuel=source;
-
-        Set<Vol> volsAeroportActuel = volsSortants.get(aeroportActuel);
-        Double distance ;
-        double distanceMin=999999999;
-        double toAdd=0;
-        visités.add(aeroportActuel);
-        Aeroport volDestination= new Aeroport();
-        while(!aeroportActuel.equals(destination)){
-
-
-
-                distanceMin=999999999;
-                //remplissage du tableau temporaire
-                for (Vol vol: volsAeroportActuel
-                ) {
-                   volDestination= vol.getAeroportDestination();
-                    distance=Util.distance(aeroportActuel.getCLatitude(),aeroportActuel.getLongitude(),
-                        volDestination.getCLatitude(),volDestination.getLongitude())+toAdd;//calculate distance between get
-                    aeroportDistance.put(volDestination,distance);
-
-                    //on trouve quel aeroport sera a la moins longue distance du precedent;
-                    if(distance<distanceMin)distanceMin=distance;
-                    aeroportMin=vol.getAeroportDestination();
-
-                }
-
-                aeroportActuel=aeroportMin;
-                System.out.println(aeroportActuel.getCodeIATA());
-
-                visités.add(aeroportMin);
-                toAdd=distanceMin;
-
-                //remplissage du tableau definitif;
-                aeroportDistanceDef.put(aeroportMin,distanceMin);
-
-                volsAeroportActuel = volsSortants.get(aeroportActuel);
-                cpt++;
-
-
-
-
-            }
-        System.out.println("boucle finie");
-
-
-        System.out.println(aeroportDistanceDef.get(destination));
+        System.out.println(aeroportDefinits.get(aeroportCible));
     }
-
-
 
 }
